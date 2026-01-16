@@ -1,0 +1,44 @@
+# Kuya Cloud Backend - Python Dependencies
+
+# FastAPI
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+
+# Data Processing
+pandas==2.1.4
+numpy==1.26.3
+openpyxl==3.1.2  # For Excel support
+scipy>=1.7.0
+
+# Kuya Data Library (Your Own!)
+kuya-data==0.1.1  # https://pypi.org/project/kuya-data/
+
+# Visualization
+matplotlib==3.8.2
+seaborn==0.13.1
+
+# PDF Generation
+reportlab==4.0.8
+
+# Database
+pymongo==4.6.1
+motor==3.3.2  # Async MongoDB driver
+
+# File Storage
+aiofiles==23.2.1
+
+# Security
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+email-validator==2.1.0
+
+# HTTP Client
+httpx==0.26.0
+
+# Async support
+anyio==4.2.0
+
+# Environment
+python-dotenv==1.0.0
+openpyxl

@@ -3,6 +3,7 @@
 import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { motion, AnimatePresence } from "framer-motion";
+import { signIn } from "next-auth/react";
 import {
     Upload,
     FileSpreadsheet,
@@ -58,6 +59,10 @@ export function FileUpload({ onUploadComplete, userEmail }: FileUploadProps) {
     });
 
     const handleUpload = async () => {
+        if (!userEmail) {
+            signIn("google");
+            return;
+        }
         if (!file) return;
 
         setUploading(true);

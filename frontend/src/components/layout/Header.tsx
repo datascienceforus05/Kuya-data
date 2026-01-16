@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useAuth } from "@/contexts/AuthContext";
 import {
     Cloud,
     Menu,
@@ -14,6 +14,7 @@ import {
     CreditCard,
     LogOut,
     ChevronDown,
+    User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -31,7 +32,8 @@ export function Header() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const pathname = usePathname();
-    const { data: session, status } = useSession();
+    const router = useRouter();
+    const { user, isAuthenticated, logout, isLoading } = useAuth();
 
     // Do not show header on admin pages
     if (pathname?.startsWith("/admin")) return null;
@@ -47,6 +49,12 @@ export function Header() {
     const isActive = (href: string) => {
         if (href === "/") return pathname === "/";
         return pathname.startsWith(href);
+    };
+
+    const handleLogout = () => {
+        logout();
+        setIsProfileOpen(false);
+        router.push("/");
     };
 
     return (
@@ -102,18 +110,17 @@ export function Header() {
 
                     {/* Right Section */}
                     <div className="flex items-center gap-3">
-                        {status === "loading" ? (
+                        {isLoading ? (
                             <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse" />
-                        ) : session ? (
+                        ) : isAuthenticated && user ? (
                             <div className="relative">
                                 <button
                                     onClick={() => setIsProfileOpen(!isProfileOpen)}
                                     className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                                 >
                                     <Avatar>
-                                        <AvatarImage src={session.user?.image || ""} />
                                         <AvatarFallback>
-                                            {session.user?.name?.[0] || "U"}
+                                            {user.name?.[0] || "U"}
                                         </AvatarFallback>
                                     </Avatar>
                                     <ChevronDown className="w-4 h-4 text-gray-500 hidden sm:block" />
@@ -130,11 +137,14 @@ export function Header() {
                                         >
                                             <div className="px-3 py-2 border-b border-gray-100 dark:border-gray-800 mb-2">
                                                 <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                                                    {session.user?.name}
+                                                    {user.name}
                                                 </p>
                                                 <p className="text-xs text-gray-500 truncate">
-                                                    {session.user?.email}
+                                                    {user.email}
                                                 </p>
+                                                <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
+                                                    {user.plan || "Free"} Plan
+                                                </span>
                                             </div>
                                             <Link
                                                 href="/dashboard"
@@ -162,7 +172,7 @@ export function Header() {
                                             </Link>
                                             <div className="border-t border-gray-100 dark:border-gray-800 mt-2 pt-2">
                                                 <button
-                                                    onClick={() => signOut()}
+                                                    onClick={handleLogout}
                                                     className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                                                 >
                                                     <LogOut className="w-4 h-4" />
@@ -175,14 +185,14 @@ export function Header() {
                             </div>
                         ) : (
                             <>
-                                <Button
-                                    variant="ghost"
-                                    className="hidden sm:inline-flex"
-                                    onClick={() => signIn("google")}
-                                >
-                                    Sign In
-                                </Button>
-                                <Button onClick={() => signIn("google")}>Get Started</Button>
+                                <Link href="/login">
+                                    <Button variant="ghost" className="hidden sm:inline-flex">
+                                        Sign In
+                                    </Button>
+                                </Link>
+                                <Link href="/signup">
+                                    <Button>Get Started</Button>
+                                </Link>
                             </>
                         )}
 
@@ -226,7 +236,7 @@ export function Header() {
                                         {link.label}
                                     </Link>
                                 ))}
-                                {session && (
+                                {isAuthenticated && (
                                     <Link
                                         href="/dashboard"
                                         onClick={() => setIsMobileMenuOpen(false)}
@@ -234,6 +244,24 @@ export function Header() {
                                     >
                                         Dashboard
                                     </Link>
+                                )}
+                                {!isAuthenticated && (
+                                    <>
+                                        <Link
+                                            href="/login"
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                            className="block px-4 py-3 rounded-lg font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+                                        >
+                                            Sign In
+                                        </Link>
+                                        <Link
+                                            href="/signup"
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                            className="block px-4 py-3 rounded-lg font-medium text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20"
+                                        >
+                                            Get Started
+                                        </Link>
+                                    </>
                                 )}
                             </nav>
                         </motion.div>

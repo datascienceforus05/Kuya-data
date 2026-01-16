@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession, signIn } from "next-auth/react";
+import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Upload,
@@ -44,7 +44,7 @@ type UploadStatus = "idle" | "uploading" | "processing" | "success" | "error";
 
 export default function UploadPage() {
     const router = useRouter();
-    const { data: session } = useSession();
+    const { user, isAuthenticated } = useAuth();
     const [file, setFile] = useState<File | null>(null);
     const [status, setStatus] = useState<UploadStatus>("idle");
     const [progress, setProgress] = useState(0);
@@ -83,8 +83,8 @@ export default function UploadPage() {
 
     // Handle file selection
     const handleFileSelect = useCallback((selectedFile: File) => {
-        if (!session) {
-            signIn("google");
+        if (!isAuthenticated) {
+            router.push("/login");
             return;
         }
 
@@ -109,7 +109,7 @@ export default function UploadPage() {
 
         setFile(selectedFile);
         setError(null);
-    }, [session]);
+    }, [isAuthenticated, router]);
 
     // Handle drag and drop
     const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -163,8 +163,8 @@ export default function UploadPage() {
             const formData = new FormData();
             formData.append("file", file);
             formData.append("features", selectAll ? "all" : JSON.stringify(selectedFeatures));
-            if (session?.user?.email) {
-                formData.append("email", session.user.email);
+            if (user?.email) {
+                formData.append("email", user.email);
             }
 
             setStatus("processing");

@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useSession, signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 import {
     Check,
     Sparkles,
@@ -142,7 +143,8 @@ const faqs = [
 ];
 
 export default function PricingPage() {
-    const { data: session } = useSession();
+    const router = useRouter();
+    const { user, isAuthenticated } = useAuth();
     const [loading, setLoading] = useState<string | null>(null);
     const [showPhoneModal, setShowPhoneModal] = useState(false);
     const [phoneNumber, setPhoneNumber] = useState("");
@@ -152,15 +154,15 @@ export default function PricingPage() {
     const [userPlan, setUserPlan] = useState<string>("free");
 
     useEffect(() => {
-        if (session?.user?.email) {
-            fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/user/${encodeURIComponent(session.user.email)}`)
+        if (user?.email) {
+            fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/user/${encodeURIComponent(user.email)}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data.plan) setUserPlan(data.plan);
                 })
                 .catch(err => console.error("Failed to fetch user plan:", err));
         }
-    }, [session]);
+    }, [user]);
 
     // Initialize Cashfree SDK
     useEffect(() => {
@@ -179,8 +181,8 @@ export default function PricingPage() {
     }, []);
 
     const handleUpgrade = async (plan: typeof plans[0]) => {
-        if (!session) {
-            signIn("google");
+        if (!isAuthenticated) {
+            router.push("/login");
             return;
         }
 
@@ -209,8 +211,8 @@ export default function PricingPage() {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    customerEmail: session?.user?.email,
-                    customerName: session?.user?.name,
+                    customerEmail: user?.email,
+                    customerName: user?.name,
                     customerPhone: phoneNumber.startsWith("+91") ? phoneNumber : `+91${phoneNumber}`,
                     amount: selectedPlan.amount,
                     planId: selectedPlan.id,

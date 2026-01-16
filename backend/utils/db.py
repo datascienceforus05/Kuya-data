@@ -8,9 +8,9 @@ import os
 import certifi
 from typing import Optional
 
-# MongoDB connection settings
-MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
-DATABASE_NAME = os.getenv("DATABASE_NAME", "kuya_cloud")
+# MongoDB connection settings - check both possible env var names
+MONGODB_URI = os.getenv("MONGODB_URI") or os.getenv("MONGODB_URL") or "mongodb://localhost:27017"
+DATABASE_NAME = os.getenv("DATABASE_NAME") or os.getenv("DB_NAME") or "kuya_cloud"
 
 # Global client instances
 _async_client: Optional[AsyncIOMotorClient] = None

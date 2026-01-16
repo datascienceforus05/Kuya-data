@@ -5,6 +5,7 @@ Database Utility - MongoDB connection and operations
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import MongoClient
 import os
+import certifi
 from typing import Optional
 
 # MongoDB connection settings
@@ -24,7 +25,7 @@ def get_database():
     global _async_client
     
     if _async_client is None:
-        _async_client = AsyncIOMotorClient(MONGODB_URI)
+        _async_client = AsyncIOMotorClient(MONGODB_URI, tlsCAFile=certifi.where())
     
     return _async_client[DATABASE_NAME]
 
@@ -37,7 +38,7 @@ def get_sync_database():
     global _sync_client
     
     if _sync_client is None:
-        _sync_client = MongoClient(MONGODB_URI)
+        _sync_client = MongoClient(MONGODB_URI, tlsCAFile=certifi.where())
     
     return _sync_client[DATABASE_NAME]
 

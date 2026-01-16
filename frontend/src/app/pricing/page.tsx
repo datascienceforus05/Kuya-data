@@ -18,6 +18,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+// @ts-ignore - Module declaration might significantly fail in CI environments
 import { load } from "@cashfreepayments/cashfree-js";
 
 const plans = [

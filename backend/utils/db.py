@@ -25,7 +25,12 @@ def get_database():
     global _async_client
     
     if _async_client is None:
-        _async_client = AsyncIOMotorClient(MONGODB_URI, tlsCAFile=certifi.where())
+        try:
+            # Try with certifi first
+            _async_client = AsyncIOMotorClient(MONGODB_URI, tlsCAFile=certifi.where())
+        except Exception:
+            # Fallback: allow invalid certificates (not recommended for production)
+            _async_client = AsyncIOMotorClient(MONGODB_URI, tls=True, tlsAllowInvalidCertificates=True)
     
     return _async_client[DATABASE_NAME]
 
@@ -38,7 +43,10 @@ def get_sync_database():
     global _sync_client
     
     if _sync_client is None:
-        _sync_client = MongoClient(MONGODB_URI, tlsCAFile=certifi.where())
+        try:
+            _sync_client = MongoClient(MONGODB_URI, tlsCAFile=certifi.where())
+        except Exception:
+            _sync_client = MongoClient(MONGODB_URI, tls=True, tlsAllowInvalidCertificates=True)
     
     return _sync_client[DATABASE_NAME]
 

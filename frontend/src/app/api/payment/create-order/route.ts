@@ -49,8 +49,8 @@ export async function POST(request: NextRequest) {
                 customer_phone: customerPhone || "+919999999999",
             },
             order_meta: {
-                return_url: `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/upgrade-success?order_id=${orderId}&plan=${planId || "pro"}`,
-                notify_url: `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/payment/webhook`,
+                return_url: `${process.env.NEXT_PUBLIC_APP_URL || "https://kuyacloud.vercel.app"}/upgrade-success?order_id=${orderId}&plan=${planId || "pro"}`,
+                notify_url: `${process.env.NEXT_PUBLIC_API_URL || "https://kuya-data-backend.onrender.com"}/payment/webhook`,
             },
             order_note: `Kuya Cloud ${planName || "Subscription"} - ₹${amount}/month`,
         };

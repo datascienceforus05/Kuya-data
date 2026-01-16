@@ -57,11 +57,11 @@ export const authOptions: NextAuthOptions = {
             }
             return true;
         },
-        async redirect({ url, baseUrl }) {
-            // Allow relative callback URLs
+        async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
+            // Allow all internal routes
             if (url.startsWith("/")) return `${baseUrl}${url}`;
-            // Allow callback URLs on the same origin
-            else if (new URL(url).origin === baseUrl) return url;
+            // Allow only same domain redirects
+            else if (url.startsWith(baseUrl)) return url;
             return baseUrl;
         },
     },

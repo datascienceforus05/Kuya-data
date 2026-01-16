@@ -17,13 +17,22 @@ app = FastAPI(
 )
 
 # CORS Configuration
+# CORS Configuration
+origins = [
+    "http://localhost:3000",
+    "https://kuya-cloud.vercel.app",
+]
+
+# Add FRONTEND_URL from env if set
+import os
+env_frontend = os.getenv("FRONTEND_URL")
+if env_frontend:
+    origins.append(env_frontend)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "https://kuya-cloud.vercel.app",
-        "https://*.vercel.app",
-    ],
+    allow_origins=origins,
+    allow_origin_regex=r"https://.*\.vercel\.app",  # Allow all Vercel subdomains
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

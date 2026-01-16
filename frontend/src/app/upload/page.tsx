@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Upload,
@@ -83,6 +83,11 @@ export default function UploadPage() {
 
     // Handle file selection
     const handleFileSelect = useCallback((selectedFile: File) => {
+        if (!session) {
+            signIn("google");
+            return;
+        }
+
         const validTypes = [
             "text/csv",
             "application/vnd.ms-excel",
@@ -104,7 +109,7 @@ export default function UploadPage() {
 
         setFile(selectedFile);
         setError(null);
-    }, []);
+    }, [session]);
 
     // Handle drag and drop
     const handleDragOver = useCallback((e: React.DragEvent) => {

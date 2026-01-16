@@ -2,7 +2,7 @@
 
 import React, { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useAuth } from "@/contexts/AuthContext";
 import { motion } from "framer-motion";
 import { CheckCircle2, Crown, Sparkles, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,7 @@ import confetti from "canvas-confetti";
 function UpgradeSuccessContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const planId = searchParams.get("plan") || "pro";
     const orderId = searchParams.get("order_id");
 
@@ -47,13 +47,13 @@ function UpgradeSuccessContent() {
     // Update user plan in database
     useEffect(() => {
         const updateUserPlan = async () => {
-            if (session?.user?.email && orderId) {
+            if (user?.email && orderId) {
                 try {
                     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/payment/upgrade`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
-                            email: session.user.email,
+                            email: user.email,
                             plan: planId,
                             orderId: orderId,
                             limit: currentPlan.limit,
@@ -70,7 +70,7 @@ function UpgradeSuccessContent() {
         };
 
         updateUserPlan();
-    }, [session, orderId, planId, currentPlan.limit]);
+    }, [user, orderId, planId, currentPlan.limit]);
 
     useEffect(() => {
         // Trigger confetti animation

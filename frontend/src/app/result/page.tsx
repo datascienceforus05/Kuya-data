@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -172,7 +172,7 @@ interface ReportData {
 function ResultContent() {
     const searchParams = useSearchParams();
     const reportId = searchParams.get("id");
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState<ReportData | null>(null);
     const [error, setError] = useState<string | null>(null);
@@ -181,13 +181,13 @@ function ResultContent() {
 
     // Fetch user plan
     useEffect(() => {
-        if (session?.user?.email) {
-            fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/user/${encodeURIComponent(session.user.email)}`)
+        if (user?.email) {
+            fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/user/${encodeURIComponent(user.email)}`)
                 .then(res => res.json())
                 .then(u => { if (u.plan) setUserPlan(u.plan); })
                 .catch(err => console.error(err));
         }
-    }, [session]);
+    }, [user]);
     const [exporting, setExporting] = useState<string | null>(null);
 
     // Re-analysis state

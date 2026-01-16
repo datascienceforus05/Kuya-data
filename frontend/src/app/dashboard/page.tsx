@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useSession, signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import {
@@ -32,36 +33,37 @@ interface UserData {
 }
 
 export default function DashboardPage() {
-    const { data: session, status } = useSession();
+    const router = useRouter();
+    const { user, isAuthenticated, isLoading } = useAuth();
     const [reports, setReports] = useState<Report[]>([]);
     const [loading, setLoading] = useState(true);
     const [userData, setUserData] = useState<UserData>({ plan: "free", planLimit: 3, usedThisMonth: 0 });
 
     useEffect(() => {
-        if (status === "unauthenticated") {
-            signIn("google");
+        if (!isLoading && !isAuthenticated) {
+            router.push("/login");
             return;
         }
 
-        if (session?.user?.email) {
+        if (user?.email) {
             const fetchData = async () => {
                 try {
                     // Fetch user data from API
                     const userRes = await fetch(
-                        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/user/${encodeURIComponent(session.user!.email!)}`
+                        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/user/${encodeURIComponent(user.email)}`
                     );
                     if (userRes.ok) {
-                        const user = await userRes.json();
+                        const userData = await userRes.json();
                         setUserData({
-                            plan: user.plan || "free",
-                            planLimit: user.planLimit || 3,
-                            usedThisMonth: user.usedThisMonth || 0,
+                            plan: userData.plan || "free",
+                            planLimit: userData.planLimit || 3,
+                            usedThisMonth: userData.usedThisMonth || 0,
                         });
                     }
 
                     // Fetch user reports from API
                     const reportsRes = await fetch(
-                        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/report/user/${encodeURIComponent(session.user!.email!)}`
+                        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/report/user/${encodeURIComponent(user.email)}`
                     );
                     if (reportsRes.ok) {
                         const reportsData = await reportsRes.json();
@@ -76,9 +78,9 @@ export default function DashboardPage() {
 
             fetchData();
         }
-    }, [session, status]);
+    }, [user, isAuthenticated, isLoading, router]);
 
-    if (status === "loading" || loading) {
+    if (isLoading || loading) {
         return (
             <div className="min-h-screen pt-24 flex items-center justify-center">
                 <Loader2 className="w-12 h-12 animate-spin text-purple-600" />
@@ -86,7 +88,7 @@ export default function DashboardPage() {
         );
     }
 
-    if (!session) {
+    if (!isAuthenticated || !user) {
         return null;
     }
 
@@ -109,7 +111,7 @@ export default function DashboardPage() {
                             <h1 className="text-3xl sm:text-4xl font-display font-bold mb-2">
                                 Welcome back,{" "}
                                 <span className="gradient-text">
-                                    {session.user?.name?.split(" ")[0]}
+                                    {user.name?.split(" ")[0]}
                                 </span>
                             </h1>
                             <p className="text-gray-600 dark:text-gray-400">

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, Suspense } from "react";
+import React, { useEffect, useState, Suspense, memo, lazy, useCallback, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
@@ -39,6 +39,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
+
+// Lazy load heavy components for performance
+const IntelligenceDisplay = lazy(() => import("@/components/result/IntelligenceDisplay"));
 
 // Define available features (Same as upload page)
 const AVAILABLE_FEATURES = [
@@ -167,6 +170,9 @@ interface ReportData {
         imbalance_warning?: string;
         target_warning?: string;
     };
+    // 🧠 TIER-BASED INTELLIGENCE
+    intelligence?: Record<string, any>;
+    userTier?: string;
 }
 
 function ResultContent() {
@@ -726,153 +732,80 @@ function ResultContent() {
 
                     {/* Intelligence Tab */}
                     {activeTab === "intelligence" && (
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-                            {(userPlan === "free" || userPlan === "starter") ? (
-                                <Card glass className="p-12 text-center border-amber-200 dark:border-amber-800">
-                                    <div className="w-20 h-20 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl shadow-purple-500/20">
-                                        <Shield className="w-10 h-10 text-white" />
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.3 }}
+                            className="space-y-6"
+                        >
+                            {data.intelligence ? (
+                                <Suspense fallback={
+                                    <div className="flex items-center justify-center py-12">
+                                        <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
                                     </div>
-                                    <h3 className="text-2xl font-bold mb-3">Dataset Intelligence (Pro)</h3>
-                                    <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-8 text-lg">
-                                        <strong>Why it matters:</strong> Raw data is rarely ready for analysis.
-                                        Our Intelligence engine runs 50+ diagnostic checks to give you a <strong>Health Score</strong>
-                                        and <strong>ML Readiness</strong> verdict. It catches data leakage, class imbalance, and
-                                        validity issues before they ruin your models.
-                                    </p>
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 text-left max-w-4xl mx-auto">
-                                        <div className="p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl border border-purple-100 dark:border-purple-900/30">
-                                            <div className="font-bold text-purple-600 mb-1">Health Score</div>
-                                            <p className="text-xs text-gray-500">Comprehensiveness, Validity, and Consistency metrics.</p>
-                                        </div>
-                                        <div className="p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl border border-purple-100 dark:border-purple-900/30">
-                                            <div className="font-bold text-purple-600 mb-1">ML Readiness</div>
-                                            <p className="text-xs text-gray-500">Know exactly if your data is ready for Random Forest, XGBoost, etc.</p>
-                                        </div>
-                                        <div className="p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl border border-purple-100 dark:border-purple-900/30">
-                                            <div className="font-bold text-purple-600 mb-1">Drift Detection</div>
-                                            <p className="text-xs text-gray-500">Identify patterns that might cause model failure.</p>
-                                        </div>
-                                    </div>
-                                    <Link href="/pricing">
-                                        <Button size="lg" className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 px-8 py-6 text-lg rounded-xl">
-                                            <Zap className="w-5 h-5 mr-2" />
-                                            Upgrade to Pro
-                                        </Button>
-                                    </Link>
-                                </Card>
+                                }>
+                                    <IntelligenceDisplay
+                                        intelligence={data.intelligence}
+                                        userTier={data.userTier || userPlan}
+                                    />
+                                </Suspense>
                             ) : (
                                 <>
-                                    {(!data.mlReadiness && !data.healthScore) && (
+                                    {/* Legacy support for old reports without intelligence data */}
+                                    {(data.mlReadiness || data.healthScore) ? (
+                                        <>
+                                            {/* ML Readiness */}
+                                            {data.mlReadiness && (
+                                                <Card glass className="p-6 mb-6">
+                                                    <div className="flex items-center justify-between mb-6">
+                                                        <h3 className="text-xl font-bold flex items-center gap-2">
+                                                            <Wand2 className="w-6 h-6 text-purple-600" />
+                                                            ML Readiness Check
+                                                        </h3>
+                                                        <Badge className={cn(
+                                                            "text-lg px-4 py-1",
+                                                            data.mlReadiness.verdict_color === "green" ? "bg-green-100 text-green-700" :
+                                                                data.mlReadiness.verdict_color === "yellow" ? "bg-amber-100 text-amber-700" :
+                                                                    "bg-red-100 text-red-700"
+                                                        )}>
+                                                            {data.mlReadiness.verdict}
+                                                        </Badge>
+                                                    </div>
+                                                </Card>
+                                            )}
+
+                                            {/* Health Score */}
+                                            {data.healthScore && (
+                                                <Card glass className="p-6">
+                                                    <div className="flex items-center justify-between mb-6">
+                                                        <h3 className="text-xl font-bold flex items-center gap-2">
+                                                            <Shield className="w-6 h-6" style={{ color: data.healthScore.color }} />
+                                                            Data Health Score
+                                                        </h3>
+                                                        <div className="text-right">
+                                                            <div className="text-3xl font-bold" style={{ color: data.healthScore.color }}>
+                                                                {data.healthScore.score}%
+                                                            </div>
+                                                            <Badge>{data.healthScore.grade}</Badge>
+                                                        </div>
+                                                    </div>
+                                                </Card>
+                                            )}
+                                        </>
+                                    ) : (
                                         <Card glass className="p-12 text-center border-dashed border-gray-300 dark:border-gray-700">
                                             <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
                                                 <Wand2 className="w-8 h-8 text-gray-400" />
                                             </div>
-                                            <h3 className="text-xl font-bold mb-2">Advanced Intelligence Not Available</h3>
+                                            <h3 className="text-xl font-bold mb-2">Intelligence Data Not Available</h3>
                                             <p className="text-gray-500 max-w-md mx-auto mb-6">
-                                                This report was generated with an older version of Kuya or without Intelligence features.
-                                                Please re-analyze your data to unlock ML Readiness, Health Score, and Target-Aware analysis.
+                                                This report was generated without the Intelligence module.
+                                                Re-analyze your data to unlock ML insights, model recommendations, and more.
                                             </p>
                                             <Button onClick={() => setShowCustomize(true)} variant="outline" className="gap-2">
                                                 <Settings2 className="w-4 h-4" />
                                                 Re-analyze Now
                                             </Button>
-                                        </Card>
-                                    )}
-
-                                    {/* ML Readiness */}
-                                    {data.mlReadiness && (
-                                        <Card glass className="p-6 mb-6">
-                                            <div className="flex items-center justify-between mb-6">
-                                                <h3 className="text-xl font-bold flex items-center gap-2">
-                                                    <Wand2 className="w-6 h-6 text-purple-600" />
-                                                    ML Readiness Check
-                                                </h3>
-                                                <Badge className={cn(
-                                                    "text-lg px-4 py-1",
-                                                    data.mlReadiness.verdict_color === "green" ? "bg-green-100 text-green-700" :
-                                                        data.mlReadiness.verdict_color === "yellow" ? "bg-amber-100 text-amber-700" :
-                                                            "bg-red-100 text-red-700"
-                                                )}>
-                                                    {data.mlReadiness.verdict}
-                                                </Badge>
-                                            </div>
-
-                                            <div className="grid md:grid-cols-2 gap-8">
-                                                <div className="space-y-4">
-                                                    {data.mlReadiness.checks?.map((check, idx) => (
-                                                        <div key={idx} className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
-                                                            <span className="font-medium text-sm">{check.check}</span>
-                                                            <span className={cn(
-                                                                "text-xs font-semibold",
-                                                                check.status === "pass" ? "text-green-600" :
-                                                                    check.status === "warning" ? "text-amber-600" : "text-red-600"
-                                                            )}>
-                                                                {check.message}
-                                                            </span>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                                <div>
-                                                    <h4 className="font-semibold mb-3 text-gray-700 dark:text-gray-300 text-sm">Recommended Models</h4>
-                                                    <div className="grid gap-3">
-                                                        {data.mlReadiness.recommended_models?.map((model, idx) => (
-                                                            <div key={idx} className="p-3 border rounded-lg border-purple-100 dark:border-gray-700 bg-purple-50/50 dark:bg-gray-800/30">
-                                                                <div className="font-bold text-sm text-purple-700 dark:text-purple-400">{model.name}</div>
-                                                                <div className="text-[10px] text-gray-500 leading-tight">{model.reason}</div>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </Card>
-                                    )}
-
-                                    {/* Health Score Breakdown */}
-                                    {data.healthScore && (
-                                        <Card glass className="p-6">
-                                            <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-                                                <Shield className="w-6 h-6 text-blue-600" />
-                                                Health Score Breakdown
-                                            </h3>
-                                            <div className="space-y-4">
-                                                {Object.entries(data.healthScore.breakdown || {}).map(([key, item]) => (
-                                                    <div key={key}>
-                                                        <div className="flex justify-between text-sm mb-1">
-                                                            <span className="font-medium text-gray-700 dark:text-gray-300">{item.label}</span>
-                                                            <span className="text-gray-500 font-mono text-xs">{item.score}/{item.max}</span>
-                                                        </div>
-                                                        <div className="h-2 w-full bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-                                                            <div
-                                                                className={cn("h-full rounded-full transition-all duration-1000",
-                                                                    (item.score / item.max) > 0.8 ? "bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.3)]" :
-                                                                        (item.score / item.max) > 0.5 ? "bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.3)]" : "bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.3)]"
-                                                                )}
-                                                                style={{ width: `${(item.score / item.max) * 100}%` }}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                            {data.healthScore.issues && (
-                                                <div className="mt-8 pt-6 border-t dark:border-gray-800 grid grid-cols-2 md:grid-cols-4 gap-4">
-                                                    <div className="text-center">
-                                                        <div className="text-xs text-gray-500 mb-1">Missing Cells</div>
-                                                        <div className="font-bold">{data.healthScore.issues.missing_cells}</div>
-                                                    </div>
-                                                    <div className="text-center">
-                                                        <div className="text-xs text-gray-500 mb-1">Duplicates</div>
-                                                        <div className="font-bold">{data.healthScore.issues.duplicate_rows}</div>
-                                                    </div>
-                                                    <div className="text-center">
-                                                        <div className="text-xs text-gray-500 mb-1">Features</div>
-                                                        <div className="font-bold">{data.healthScore.issues.total_columns}</div>
-                                                    </div>
-                                                    <div className="text-center">
-                                                        <div className="text-xs text-gray-500 mb-1">Numeric</div>
-                                                        <div className="font-bold">{data.healthScore.issues.numeric_columns}</div>
-                                                    </div>
-                                                </div>
-                                            )}
                                         </Card>
                                     )}
                                 </>

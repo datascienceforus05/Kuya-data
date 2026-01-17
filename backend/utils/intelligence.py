@@ -56,6 +56,7 @@ class DataIntelligence:
             return result
             
         # ============ PRO TIER ============
+        result["model_impact_confidence"] = self._model_impact_confidence()  # Pro-only model confidence
         result["model_preprocessing_advice"] = self._model_specific_preprocessing()
         result["scaling_impact"] = self._scaling_impact_per_model()
         result["encoding_recommendation"] = self._encoding_choice_recommendation()
@@ -223,28 +224,65 @@ class DataIntelligence:
     # ==================== STARTER TIER FEATURES ====================
     
     def _confidence_scores(self) -> Dict[str, Any]:
-        """Confidence score for each analysis."""
+        """Confidence score for data reliability (Starter tier)."""
         scores = {}
         
-        # Data quality confidence
+        # Data quality confidence - "How reliable is this dataset?"
         completeness = (1 - self.df.isnull().sum().sum() / self.df.size) * 100
         consistency = 100 - (self.df.duplicated().sum() / len(self.df) * 100)
-        scores["data_quality"] = {
+        scores["data_reliability"] = {
             "score": round((completeness + consistency) / 2, 1),
-            "explanation": "Based on completeness and consistency metrics"
+            "explanation": "How reliable is this dataset? Based on completeness and consistency.",
+            "label": "Data Reliability"
         }
         
-        # ML readiness confidence
-        ml_score = 70  # Base score
+        # ML readiness (basic) - describes data suitability, not model impact
+        readiness_score = 70  # Base score
         if completeness > 90:
-            ml_score += 15
+            readiness_score += 15
         if len(self.numeric_cols) >= 3:
-            ml_score += 10
+            readiness_score += 10
         if len(self.df) >= 100:
-            ml_score += 5
-        scores["ml_readiness"] = {
-            "score": min(ml_score, 100),
-            "explanation": "Based on data size, completeness, and feature availability"
+            readiness_score += 5
+        scores["ml_suitability"] = {
+            "score": min(readiness_score, 100),
+            "explanation": "Is this data suitable for ML? Based on size and feature availability.",
+            "label": "ML Suitability"
+        }
+        
+        return scores
+    
+    def _model_impact_confidence(self) -> Dict[str, Any]:
+        """Model impact confidence (Pro tier only) - will this improve metrics?"""
+        scores = {}
+        
+        # Feature quality impact
+        feature_score = 60
+        if len(self.numeric_cols) >= 5:
+            feature_score += 15
+        if not self._has_significant_outliers():
+            feature_score += 10
+        if len(self.categorical_cols) <= 5:  # Not too many categoricals
+            feature_score += 10
+        scores["feature_quality_impact"] = {
+            "score": min(feature_score, 100),
+            "explanation": "How likely are these features to improve model performance?",
+            "label": "Feature Quality Impact"
+        }
+        
+        # Data volume impact
+        n = len(self.df)
+        volume_score = 50
+        if n >= 1000:
+            volume_score = 85
+        elif n >= 500:
+            volume_score = 75
+        elif n >= 100:
+            volume_score = 65
+        scores["data_volume_impact"] = {
+            "score": volume_score,
+            "explanation": "Will this data volume support robust model training?",
+            "label": "Data Volume Impact"
         }
         
         return scores

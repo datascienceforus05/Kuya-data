@@ -37,7 +37,7 @@ interface IntelligenceData {
     class_imbalance?: Record<string, any>;
     outlier_flag?: { has_outliers: boolean; total_columns_affected: number; details: any[] };
     executive_summary?: string[];
-    confidence_scores?: Record<string, { score: number; explanation: string }>;
+    confidence_scores?: Record<string, { score: number; explanation: string; label?: string }>;
     tradeoff_analysis?: any[];
     baseline_model?: { task_type: string; recommended: any; alternatives: any[] };
     metric_sensitivity?: Record<string, any>;
@@ -59,6 +59,7 @@ interface IntelligenceData {
     schema_alerts?: any;
     versioned_pipeline?: any;
     inference_cost?: any;
+    model_impact_confidence?: Record<string, { score: number; explanation: string; label?: string }>;
 }
 
 interface IntelligenceDisplayProps {
@@ -267,11 +268,11 @@ const IntelligenceDisplay = memo(({ intelligence, userTier }: IntelligenceDispla
             {/* ============ STARTER TIER FEATURES ============ */}
 
             {/* Confidence Scores */}
-            <FeatureCard title="Confidence Scores" icon={TrendingUp} locked={!isStarter} tier="Starter">
+            <FeatureCard title="Data Reliability Scores" icon={TrendingUp} locked={!isStarter} tier="Starter">
                 {isStarter && intelligence.confidence_scores ? (
                     <div className="space-y-3">
                         {Object.entries(intelligence.confidence_scores).map(([key, val]) => (
-                            <ConfidenceMeter key={key} score={val.score} label={key.replace(/_/g, ' ')} />
+                            <ConfidenceMeter key={key} score={val.score} label={val.label || key.replace(/_/g, ' ')} />
                         ))}
                     </div>
                 ) : (
@@ -379,6 +380,70 @@ const IntelligenceDisplay = memo(({ intelligence, userTier }: IntelligenceDispla
                             </details>
                         ))}
                     </div>
+                ) : (
+                    <div className="h-24" />
+                )}
+            </FeatureCard>
+
+            {/* Model Impact Confidence (Pro only) */}
+            <FeatureCard title="Model Impact Confidence" icon={TrendingUp} locked={!isPro} tier="Pro">
+                {isPro && intelligence.model_impact_confidence ? (
+                    <div className="space-y-3">
+                        <p className="text-xs text-gray-500 mb-2">How confident are we this will improve model metrics?</p>
+                        {Object.entries(intelligence.model_impact_confidence).map(([key, val]) => (
+                            <ConfidenceMeter key={key} score={val.score} label={val.label || key.replace(/_/g, ' ')} />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="h-20" />
+                )}
+            </FeatureCard>
+
+            {/* Feature Priority (Pre-training) - renamed from feature_importance_preview */}
+            <FeatureCard title="Feature Priority (Pre-training)" icon={Target} locked={!isPro} tier="Pro">
+                {isPro && intelligence.feature_importance_preview ? (
+                    <div>
+                        <p className="text-xs text-gray-500 mb-3">Heuristic ranking based on data characteristics, not model training.</p>
+                        <div className="space-y-2">
+                            {intelligence.feature_importance_preview.slice(0, 5).map((feat: any, idx: number) => (
+                                <div key={idx} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 rounded">
+                                    <span className="text-sm font-medium">{feat.feature}</span>
+                                    <div className="flex items-center gap-2">
+                                        <Badge variant={feat.interpretation === 'high' ? 'default' : 'outline'} className="text-xs">
+                                            {feat.interpretation}
+                                        </Badge>
+                                        <span className="text-xs text-gray-500">{feat.importance_score}</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ) : (
+                    <div className="h-24" />
+                )}
+            </FeatureCard>
+
+            {/* Interaction Candidates - renamed from feature_interactions */}
+            <FeatureCard title="Potential Interaction Candidates" icon={Layers} locked={!isPro} tier="Pro">
+                {isPro && intelligence.feature_interactions && intelligence.feature_interactions.length > 0 ? (
+                    <div>
+                        <p className="text-xs text-amber-600 mb-3">⚠️ These are suggestions based on correlation patterns, not guaranteed to improve models.</p>
+                        <div className="space-y-2">
+                            {intelligence.feature_interactions.slice(0, 3).map((interaction: any, idx: number) => (
+                                <div key={idx} className="p-2 bg-purple-50 dark:bg-purple-900/20 rounded text-xs">
+                                    <div className="font-medium text-purple-700 dark:text-purple-300">
+                                        {interaction.features[0]} × {interaction.features[1]}
+                                    </div>
+                                    <div className="text-gray-500 mt-1">{interaction.reason}</div>
+                                    <code className="text-xs bg-gray-100 dark:bg-gray-800 px-1 rounded mt-1 inline-block">
+                                        {interaction.code}
+                                    </code>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ) : isPro ? (
+                    <div className="text-sm text-gray-500">No interaction candidates found</div>
                 ) : (
                     <div className="h-24" />
                 )}

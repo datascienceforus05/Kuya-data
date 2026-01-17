@@ -70,7 +70,7 @@ export function HeroSection() {
                     >
                         <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-sm font-medium mb-8">
                             <Sparkles className="w-4 h-4" />
-                            AI-Powered Data Intelligence Platform
+                            AI-Powered Data Decision Assistant
                         </span>
                     </motion.div>
 
@@ -244,6 +244,7 @@ export function HeroSection() {
                                         <div>
                                             <p className="text-sm font-medium text-purple-800 dark:text-purple-300">AI Recommendation</p>
                                             <p className="text-xs text-purple-600 dark:text-purple-400">Apply StandardScaler to 'Age' and 'Income' columns for better model performance</p>
+                                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 italic">Why: Improves linear models; tree-based models unaffected.</p>
                                         </div>
                                     </div>
                                 </div>

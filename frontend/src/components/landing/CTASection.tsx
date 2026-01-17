@@ -107,6 +107,17 @@ export function CTASection() {
                             </Button>
                         </Link>
                     </motion.div>
+
+                    {/* Risk Reducer */}
+                    <motion.p
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.5 }}
+                        className="mt-6 text-sm text-purple-200/80"
+                    >
+                        Free to start. No credit card. Delete data anytime.
+                    </motion.p>
                 </div>
             </div>
         </section>

@@ -18,6 +18,7 @@ from datetime import datetime
 
 from services.kuya_service import KuyaDataService
 from utils.db import get_database
+from utils.intelligence import analyze_with_intelligence
 
 router = APIRouter(prefix="/upload", tags=["Upload"])
 
@@ -144,6 +145,20 @@ async def upload_file(
         mlReadiness = results["mlReadiness"]
         targetAnalysis = results["targetAnalysis"]
         
+        # 🧠 RUN TIER-BASED INTELLIGENCE ANALYSIS
+        user_tier = "free"
+        if email:
+            db = get_database()
+            user = await db.users.find_one({"email": email})
+            if user:
+                user_tier = user.get("plan", "free")
+        
+        try:
+            intelligence = analyze_with_intelligence(cleaned_df, tier=user_tier)
+        except Exception as e:
+            print(f"⚠️ Intelligence analysis error: {e}")
+            intelligence = {}
+        
         # ==================== SAVE TO DATABASE ====================
         try:
             db = get_database()
@@ -174,6 +189,9 @@ async def upload_file(
                 "engineeringSuggestions": engineeringSuggestions,
                 "mlReadiness": mlReadiness,
                 "targetAnalysis": targetAnalysis,
+                # 🧠 TIER-BASED INTELLIGENCE
+                "intelligence": intelligence,
+                "userTier": user_tier,
             })
             
             await reports_collection.insert_one(report_doc)
@@ -211,6 +229,9 @@ async def upload_file(
             "engineeringSuggestions": engineeringSuggestions,
             "mlReadiness": mlReadiness,
             "targetAnalysis": targetAnalysis,
+            # 🧠 TIER-BASED INTELLIGENCE
+            "intelligence": intelligence,
+            "userTier": user_tier,
         })
 
         return JSONResponse(content=response_data)

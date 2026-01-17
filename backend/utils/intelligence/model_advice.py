@@ -1,6 +1,30 @@
 """
 Model Advice Module - STARTER + PRO tier features
-Handles model recommendations, preprocessing advice, and confidence scores
+==================================================
+Purpose:
+    Generate model-aware recommendations WITHOUT training models.
+    All outputs are heuristic, explainable, and tier-gated.
+
+Features (Starter):
+    - Confidence Scores (data reliability)
+    - Trade-off Analysis
+    - Baseline Model Suggestions
+    - Metric Sensitivity
+    - Assumption Checks
+    - Outlier Strategy
+    - High Impact Features
+
+Features (Pro):
+    - Model Impact Confidence (heuristic)
+    - Model-Specific Preprocessing
+    - Scaling Impact Analysis
+    - Encoding Recommendations
+    - Feature Importance (pre-training heuristic)
+    - Feature Interaction Hints
+
+Target Users:
+    Starter tier: Students, learners
+    Pro tier: Analysts, data scientists
 """
 
 import pandas as pd
@@ -47,7 +71,7 @@ class ModelAdvisor:
         return scores
     
     def model_impact_confidence(self) -> Dict[str, Any]:
-        """Model impact confidence (Pro tier only)."""
+        """Model impact confidence (Pro tier only) - heuristic, not trained."""
         scores = {}
         
         feature_score = 60
@@ -59,7 +83,7 @@ class ModelAdvisor:
             feature_score += 10
         scores["feature_quality_impact"] = {
             "score": min(feature_score, 100),
-            "explanation": "How likely are these features to improve model performance?",
+            "explanation": "Heuristic estimate of feature quality impact on models.",
             "label": "Feature Quality Impact"
         }
         

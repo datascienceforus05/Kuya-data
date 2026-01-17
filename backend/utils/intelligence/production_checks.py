@@ -1,6 +1,27 @@
 """
 Production Checks Module - PRO + ENTERPRISE tier features
-Handles deployment readiness, drift detection, and production pipeline generation
+==========================================================
+Purpose:
+    Assess production readiness and export deployment artifacts.
+    All outputs help bridge the gap between analysis and deployment.
+
+Features (Pro):
+    - Train-Serve Consistency Checks
+    - Exportable Preprocessing Pipeline (sklearn)
+    - Saved Artifacts Information
+    - Reproducibility Lock (seeds, hashes)
+    - Risky Features Flagging
+
+Features (Enterprise):
+    - Deployment Readiness Score
+    - Data Drift Risk Assessment
+    - Schema Change Alerts
+    - Versioned Pipeline Export
+    - Inference Cost Estimation
+
+Target Users:
+    Pro tier: Analysts preparing for production
+    Enterprise tier: ML engineers, production systems
 """
 
 import pandas as pd

@@ -1,6 +1,19 @@
 """
 Data Quality Module - FREE tier features
-Handles basic data quality checks and insights
+========================================
+Purpose:
+    Analyze data quality WITHOUT training models.
+    All outputs are immediate, explainable, and safe for all users.
+
+Features:
+    - Why This Matters (key findings explained)
+    - Data Leakage Detection (ID/timestamp warnings)
+    - Class Imbalance Detection
+    - Outlier Flagging
+    - Executive Summary
+
+Target Users:
+    Everyone (free tier and above)
 """
 
 import pandas as pd

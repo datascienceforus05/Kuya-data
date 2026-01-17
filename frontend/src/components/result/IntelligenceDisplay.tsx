@@ -386,7 +386,7 @@ const IntelligenceDisplay = memo(({ intelligence, userTier }: IntelligenceDispla
             </FeatureCard>
 
             {/* Model Impact Confidence (Pro only) */}
-            <FeatureCard title="Model Impact Confidence" icon={TrendingUp} locked={!isPro} tier="Pro">
+            <FeatureCard title="Expected Impact Confidence (heuristic)" icon={TrendingUp} locked={!isPro} tier="Pro">
                 {isPro && intelligence.model_impact_confidence ? (
                     <div className="space-y-3">
                         <p className="text-xs text-gray-500 mb-2">How confident are we this will improve model metrics?</p>

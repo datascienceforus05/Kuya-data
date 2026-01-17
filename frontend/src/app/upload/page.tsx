@@ -25,19 +25,19 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-// Define available features
+// Define available features with professional names
 const AVAILABLE_FEATURES = [
-    { id: "cleaning", name: "Data Cleaning", icon: Brush, description: "Auto missing values & type fixes" },
-    { id: "eda", name: "Summary Stats", icon: BarChart3, description: "Mean, median, quartiles" },
-    { id: "correlation", name: "Correlation", icon: PieChart, description: "Correlation matrix & heatmap" },
-    { id: "distribution", name: "Distributions", icon: BarChart3, description: "Histograms with KDE" },
-    { id: "boxplot", name: "Box Plots", icon: Box, description: "Outlier visualization" },
-    { id: "bar", name: "Bar Charts", icon: BarChart3, description: "Categorical analysis" },
-    { id: "pairplot", name: "Pair Plot", icon: ScatterChart, description: "All numeric pairs" },
-    { id: "scatter", name: "Scatter Plots", icon: ScatterChart, description: "Correlated columns" },
-    { id: "quality", name: "Quality Score", icon: Shield, description: "Data quality analysis" },
-    { id: "outliers", name: "Outliers", icon: Search, description: "Outlier detection" },
-    { id: "magic", name: "Magic Analysis", icon: Wand2, description: "AI recommendations" },
+    { id: "cleaning", name: "Data Quality Checks", icon: Brush, description: "Missing values, leakage risks, outliers" },
+    { id: "eda", name: "Summary Statistics", icon: BarChart3, description: "Mean, median, quartiles, distributions" },
+    { id: "correlation", name: "Correlation Analysis", icon: PieChart, description: "Feature relationships & heatmap" },
+    { id: "distribution", name: "Distribution Plots", icon: BarChart3, description: "Histograms with density curves" },
+    { id: "boxplot", name: "Outlier Visualization", icon: Box, description: "Box plots & extreme value flags" },
+    { id: "bar", name: "Category Analysis", icon: BarChart3, description: "Categorical frequency breakdown" },
+    { id: "pairplot", name: "Feature Pairs", icon: ScatterChart, description: "Numeric column relationships" },
+    { id: "scatter", name: "Scatter Analysis", icon: ScatterChart, description: "High correlation pairs" },
+    { id: "quality", name: "ML Readiness", icon: Shield, description: "Model suitability assessment" },
+    { id: "outliers", name: "Anomaly Detection", icon: Search, description: "Statistical outlier flagging" },
+    { id: "magic", name: "Decision Insights", icon: Wand2, description: "What to fix, ignore, do next" },
 ];
 
 type UploadStatus = "idle" | "uploading" | "processing" | "success" | "error";
@@ -233,14 +233,14 @@ export default function UploadPage() {
                 >
                     <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-sm font-medium mb-6">
                         <Sparkles className="w-4 h-4" />
-                        Kuya Data Analysis
+                        AI-Powered Analysis
                     </span>
                     <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mb-6">
-                        Upload Your{" "}
-                        <span className="gradient-text">Data File</span>
+                        Analyze Your Data —{" "}
+                        <span className="gradient-text">We'll Handle the Thinking</span>
                     </h1>
                     <p className="text-lg text-gray-600 dark:text-gray-400">
-                        Drop your CSV or Excel file and select the analyses you want
+                        Upload your file and get clear recommendations, risks, and next steps.
                     </p>
                 </motion.div>
 
@@ -292,10 +292,13 @@ export default function UploadPage() {
                                                 <FileSpreadsheet className="w-8 h-8 text-purple-600" />
                                             </div>
                                             <p className="text-lg font-medium mb-2">
-                                                Drop your file here or click to browse
+                                                Drop your CSV or Excel file here
                                             </p>
-                                            <p className="text-sm text-gray-500">
-                                                Supports CSV, XLS, XLSX (max 10MB)
+                                            <p className="text-sm text-gray-500 mb-1">
+                                                We analyze structure, quality, and readiness automatically.
+                                            </p>
+                                            <p className="text-xs text-gray-400">
+                                                Supports .csv, .xls, .xlsx (max 10MB)
                                             </p>
                                         </motion.div>
                                     )}
@@ -387,7 +390,7 @@ export default function UploadPage() {
                                             onClick={uploadFile}
                                         >
                                             <Zap className="w-4 h-4 mr-2" />
-                                            Analyze Now
+                                            Analyze My Data
                                         </Button>
                                         <Button
                                             variant="outline"
@@ -419,61 +422,81 @@ export default function UploadPage() {
                         transition={{ delay: 0.2 }}
                     >
                         <Card glass className="p-8">
-                            <div className="flex items-center justify-between mb-6">
-                                <h2 className="text-xl font-display font-semibold flex items-center gap-2">
-                                    <Wand2 className="w-5 h-5 text-purple-600" />
-                                    Select Features
-                                </h2>
+                            <div className="flex items-center justify-between mb-4">
+                                <div>
+                                    <h2 className="text-xl font-display font-semibold flex items-center gap-2">
+                                        <Wand2 className="w-5 h-5 text-purple-600" />
+                                        Recommended Analysis
+                                    </h2>
+                                    <p className="text-sm text-gray-500 mt-1">Covers data quality, risks, and key insights.</p>
+                                </div>
                                 <Button
-                                    variant={selectAll ? "default" : "outline"}
+                                    variant={selectAll ? "outline" : "default"}
                                     size="sm"
                                     onClick={toggleSelectAll}
                                 >
-                                    {selectAll ? "Select Individual" : "Select All"}
+                                    {selectAll ? "Customize" : "Use Default"}
                                 </Button>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-3">
-                                {AVAILABLE_FEATURES.map((feature) => {
-                                    const isSelected = selectAll || selectedFeatures.includes(feature.id);
-                                    const Icon = feature.icon;
+                            {!selectAll && (
+                                <>
+                                    <p className="text-xs text-gray-500 mb-4">⚙️ Advanced: Choose specific analyses for faster results.</p>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        {AVAILABLE_FEATURES.map((feature) => {
+                                            const isSelected = selectedFeatures.includes(feature.id);
+                                            const Icon = feature.icon;
 
-                                    return (
-                                        <motion.button
-                                            key={feature.id}
-                                            whileHover={{ scale: 1.02 }}
-                                            whileTap={{ scale: 0.98 }}
-                                            onClick={() => toggleFeature(feature.id)}
-                                            className={cn(
-                                                "p-3 rounded-xl border text-left transition-all duration-200",
-                                                isSelected
-                                                    ? "border-purple-500 bg-purple-50 dark:bg-purple-900/20"
-                                                    : "border-gray-200 dark:border-gray-700 hover:border-purple-300"
-                                            )}
-                                        >
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <Icon className={cn(
-                                                    "w-4 h-4",
-                                                    isSelected ? "text-purple-600" : "text-gray-400"
-                                                )} />
-                                                <span className={cn(
-                                                    "font-medium text-sm",
-                                                    isSelected ? "text-purple-700 dark:text-purple-300" : "text-gray-600 dark:text-gray-400"
-                                                )}>
-                                                    {feature.name}
-                                                </span>
-                                            </div>
-                                            <p className="text-xs text-gray-500 dark:text-gray-500">
-                                                {feature.description}
-                                            </p>
-                                        </motion.button>
-                                    );
-                                })}
-                            </div>
+                                            return (
+                                                <motion.button
+                                                    key={feature.id}
+                                                    whileHover={{ scale: 1.02 }}
+                                                    whileTap={{ scale: 0.98 }}
+                                                    onClick={() => toggleFeature(feature.id)}
+                                                    className={cn(
+                                                        "p-3 rounded-xl border text-left transition-all duration-200",
+                                                        isSelected
+                                                            ? "border-purple-500 bg-purple-50 dark:bg-purple-900/20"
+                                                            : "border-gray-200 dark:border-gray-700 hover:border-purple-300"
+                                                    )}
+                                                >
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <Icon className={cn(
+                                                            "w-4 h-4",
+                                                            isSelected ? "text-purple-600" : "text-gray-400"
+                                                        )} />
+                                                        <span className={cn(
+                                                            "font-medium text-sm",
+                                                            isSelected ? "text-purple-700 dark:text-purple-300" : "text-gray-600 dark:text-gray-400"
+                                                        )}>
+                                                            {feature.name}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-xs text-gray-500 dark:text-gray-500">
+                                                        {feature.description}
+                                                    </p>
+                                                </motion.button>
+                                            );
+                                        })}
+                                    </div>
+                                </>
+                            )}
 
-                            <div className="mt-6 p-4 rounded-xl bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20">
-                                <p className="text-sm text-gray-600 dark:text-gray-400">
-                                    <strong className="text-purple-600">Tip:</strong> Select &quot;All&quot; for comprehensive analysis or pick specific features for faster processing.
+                            {selectAll && (
+                                <div className="p-4 rounded-xl bg-purple-50 dark:bg-purple-900/20 text-center">
+                                    <CheckCircle className="w-8 h-8 text-green-600 mx-auto mb-2" />
+                                    <p className="text-sm font-medium text-purple-700 dark:text-purple-300">
+                                        All analyses included
+                                    </p>
+                                    <p className="text-xs text-gray-500 mt-1">
+                                        Quality checks, EDA, visualizations, and decision insights.
+                                    </p>
+                                </div>
+                            )}
+
+                            <div className="mt-6 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700">
+                                <p className="text-xs text-gray-500 text-center">
+                                    🔒 No models are trained. Your data is not modified or shared.
                                 </p>
                             </div>
                         </Card>
@@ -487,15 +510,18 @@ export default function UploadPage() {
                     transition={{ delay: 0.3 }}
                     className="mt-12 max-w-5xl mx-auto"
                 >
-                    <h2 className="text-2xl font-display font-bold text-center mb-8">
-                        Powered by <span className="gradient-text">Kuya Data</span>
+                    <h2 className="text-2xl font-display font-bold text-center mb-2">
+                        What You'll Get
                     </h2>
+                    <p className="text-center text-sm text-gray-500 mb-8">
+                        Takes ~5–15 seconds. You'll see insights before any download.
+                    </p>
                     <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         {[
-                            { icon: Brush, title: "Smart Cleaning", desc: "Auto-fix missing values, types, outliers" },
-                            { icon: BarChart3, title: "Deep EDA", desc: "Stats, distributions, correlations" },
-                            { icon: ScatterChart, title: "Visualizations", desc: "Charts, plots, heatmaps" },
-                            { icon: Wand2, title: "Magic Insights", desc: "AI-powered recommendations" },
+                            { icon: Brush, title: "Data Quality Checks", desc: "Missing values, leakage risks, outliers" },
+                            { icon: BarChart3, title: "Exploratory Analysis", desc: "Distributions, correlations, summaries" },
+                            { icon: ScatterChart, title: "Visual Explanations", desc: "Charts that highlight what matters" },
+                            { icon: Wand2, title: "Decision Insights", desc: "What to fix, ignore, do next" },
                         ].map((item, idx) => (
                             <Card key={idx} glass className="p-4 text-center">
                                 <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center mx-auto mb-3">

@@ -55,7 +55,7 @@ export function CTASection() {
                     >
                         <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-white text-sm font-medium mb-6 backdrop-blur-sm">
                             <Sparkles className="w-4 h-4" />
-                            Ready to Transform Your Data?
+                            Ready to Stop Guessing?
                         </span>
                     </motion.div>
 
@@ -66,7 +66,7 @@ export function CTASection() {
                         transition={{ delay: 0.1 }}
                         className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-white mb-6"
                     >
-                        Start Analyzing Your Data{" "}
+                        Start Making Confident Decisions{" "}
                         <span className="text-purple-200">Today</span>
                     </motion.h2>
 
@@ -77,8 +77,8 @@ export function CTASection() {
                         transition={{ delay: 0.2 }}
                         className="text-lg text-purple-100 mb-10"
                     >
-                        Join thousands of data professionals who trust Kuya Cloud for their
-                        data cleaning and analysis needs.
+                        Used by students learning data science, analysts delivering faster,
+                        and freelancers impressing clients. Start free, upgrade when ready.
                     </motion.p>
 
                     <motion.div
@@ -93,7 +93,7 @@ export function CTASection() {
                                 size="xl"
                                 className="bg-white text-purple-700 hover:bg-gray-100 group"
                             >
-                                Get Started Free
+                                Analyze My Data
                                 <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
                             </Button>
                         </Link>

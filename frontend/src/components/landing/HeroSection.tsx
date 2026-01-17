@@ -70,7 +70,7 @@ export function HeroSection() {
                     >
                         <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-sm font-medium mb-8">
                             <Sparkles className="w-4 h-4" />
-                            Automated Data Cleaning & Analysis
+                            AI-Powered Data Intelligence Platform
                         </span>
                     </motion.div>
 
@@ -81,7 +81,7 @@ export function HeroSection() {
                         transition={{ duration: 0.5, delay: 0.1 }}
                         className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold tracking-tight mb-6"
                     >
-                        Transform Raw Data{" "}
+                        Think Like a Senior Data Analyst{" "}
                         <span className="relative">
                             <span className="relative z-10 gradient-text">Instantly</span>
                             <motion.span
@@ -100,9 +100,8 @@ export function HeroSection() {
                         transition={{ duration: 0.5, delay: 0.2 }}
                         className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-10"
                     >
-                        Upload your CSV or Excel files and get automated data cleaning,
-                        exploratory data analysis, beautiful charts, and downloadable PDF reports
-                        — all in seconds.
+                        Upload your data and get clear recommendations, risk warnings, and ML-ready insights
+                        — explained in plain English. No code required.
                     </motion.p>
 
                     {/* CTA Buttons */}
@@ -114,7 +113,7 @@ export function HeroSection() {
                     >
                         <Link href="/upload">
                             <Button size="xl" className="group">
-                                Upload Data Now
+                                Analyze My Data
                                 <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
                             </Button>
                         </Link>
@@ -133,10 +132,10 @@ export function HeroSection() {
                         className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto"
                     >
                         {[
-                            { value: "10K+", label: "Files Processed" },
-                            { value: "99.9%", label: "Accuracy Rate" },
-                            { value: "5sec", label: "Avg. Processing" },
-                            { value: "4.9★", label: "User Rating" },
+                            { value: "10K+", label: "Analyses Completed" },
+                            { value: "5hrs", label: "Saved Per Week" },
+                            { value: "3", label: "Tiers for Everyone" },
+                            { value: "4.9\u2605", label: "User Rating" },
                         ].map((stat, idx) => (
                             <div key={idx} className="text-center">
                                 <div className="text-2xl sm:text-3xl font-display font-bold gradient-text">

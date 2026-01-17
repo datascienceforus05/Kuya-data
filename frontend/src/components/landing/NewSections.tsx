@@ -51,8 +51,8 @@ export function HowItWorksSection() {
         },
         {
             icon: Wand2,
-            title: "Magic Happens",
-            desc: "Our AI engine cleans your data, detects patterns, fixes missing values, and runs complete EDA.",
+            title: "AI Analyzes & Explains",
+            desc: "Our engine analyzes your data and explains what matters, what doesn't, and what to do next.",
             color: "from-indigo-500 to-blue-500"
         },
         {
@@ -181,8 +181,8 @@ export function TrustedBySection() {
                             >
                                 <motion.div
                                     className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 ${hoveredIdx === idx
-                                            ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400'
-                                            : 'text-gray-400 hover:text-gray-600'
+                                        ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400'
+                                        : 'text-gray-400 hover:text-gray-600'
                                         }`}
                                     whileHover={{ scale: 1.05 }}
                                 >
@@ -226,21 +226,24 @@ export function TrustedBySection() {
 export function UseCasesSection() {
     const useCases = [
         {
-            title: "Data Scientists",
-            desc: "Skip hours of tedious cleaning. Go straight to modeling with pre-processed datasets.",
-            bullets: ["Auto feature engineering", "ML readiness reports", "Outlier analysis"],
+            title: "Students & Career Switchers",
+            desc: "Learn how professionals think. Build your portfolio with real analysis.",
+            bullets: ["Learn by doing", "ML-ready outputs", "Interview-ready projects"],
+            tagline: "Learn like a pro.",
             color: "purple"
         },
         {
-            title: "Business Analysts",
-            desc: "Generate professional reports in seconds. Impress stakeholders with beautiful charts.",
-            bullets: ["One-click PDF exports", "Executive summaries", "Interactive visuals"],
+            title: "Junior Analysts & Freelancers",
+            desc: "Deliver faster, with confidence. Impress clients with professional insights.",
+            bullets: ["One-click PDF reports", "Prioritized insights", "Risk warnings"],
+            tagline: "Deliver faster, smarter.",
             color: "indigo"
         },
         {
-            title: "Researchers & Students",
-            desc: "Turn raw survey data into publication-ready analysis without writing code.",
-            bullets: ["Statistical summaries", "Distribution plots", "Correlation heatmaps"],
+            title: "Business Analysts & Data Scientists",
+            desc: "Skip the boring parts. Focus on what matters — strategy and models.",
+            bullets: ["Auto preprocessing", "ML readiness checks", "Feature engineering hints"],
+            tagline: "Skip the grunt work.",
             color: "blue"
         },
     ];
@@ -279,7 +282,8 @@ export function UseCasesSection() {
                     {useCases.map((useCase, idx) => (
                         <motion.div key={idx} variants={fadeUp}>
                             <Card className={`p-8 h-full bg-white dark:bg-gray-800 border-t-4 border-t-${useCase.color}-500 hover:shadow-2xl transition-all duration-300 group`}>
-                                <h3 className="text-2xl font-bold mb-4 group-hover:text-purple-600 transition-colors">{useCase.title}</h3>
+                                <h3 className="text-2xl font-bold mb-2 group-hover:text-purple-600 transition-colors">{useCase.title}</h3>
+                                <p className="text-sm font-semibold text-purple-600 dark:text-purple-400 mb-4">{useCase.tagline}</p>
                                 <p className="text-gray-600 dark:text-gray-400 mb-6">{useCase.desc}</p>
                                 <ul className="space-y-3">
                                     {useCase.bullets.map((bullet, i) => (

@@ -15,37 +15,37 @@ import { Card } from "@/components/ui/card";
 const features = [
     {
         icon: Sparkles,
-        title: "Auto Data Cleaning",
+        title: "Smart Cleaning with Warnings",
         description:
-            "Automatically handle missing values, fix data types, remove duplicates, and standardize formats.",
+            "Automatically handle missing values, fix data types, and get clear warnings about what was changed and why.",
         gradient: "from-purple-500 to-indigo-500",
     },
     {
         icon: BarChart3,
-        title: "Instant EDA",
+        title: "EDA with Context & Priority",
         description:
-            "Get comprehensive exploratory data analysis with summary statistics, distributions, and correlations.",
+            "Get prioritized insights that matter most. We highlight what's important, not just everything.",
         gradient: "from-indigo-500 to-blue-500",
     },
     {
         icon: PieChart,
-        title: "Beautiful Charts",
+        title: "Charts That Tell Stories",
         description:
-            "Visualize your data with automatically generated charts including histograms, heatmaps, and more.",
+            "Visualizations with explanations. Each chart comes with context about what you're seeing.",
         gradient: "from-blue-500 to-cyan-500",
     },
     {
         icon: FileDown,
-        title: "PDF Reports",
+        title: "Decision-Ready Reports",
         description:
-            "Download professional PDF reports with all insights, charts, and cleaned data ready to share.",
+            "Download reports that guide decisions, not just display numbers. Share confidently with stakeholders.",
         gradient: "from-cyan-500 to-teal-500",
     },
     {
         icon: Zap,
-        title: "Lightning Fast",
+        title: "ML Intelligence Built-In",
         description:
-            "Process files in seconds with our optimized Python backend powered by pandas and numpy.",
+            "Get model recommendations, preprocessing advice, and deployment readiness checks automatically.",
         gradient: "from-teal-500 to-green-500",
     },
     {
@@ -89,7 +89,7 @@ export function FeaturesSection() {
                         className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-sm font-medium mb-6"
                     >
                         <Sparkles className="w-4 h-4" />
-                        Powerful Features
+                        Beyond Auto-EDA
                     </motion.span>
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
@@ -98,8 +98,8 @@ export function FeaturesSection() {
                         transition={{ delay: 0.1 }}
                         className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mb-6"
                     >
-                        Everything You Need for{" "}
-                        <span className="gradient-text">Data Analysis</span>
+                        Everything You Need to Make{" "}
+                        <span className="gradient-text">the Right Decisions</span>
                     </motion.h2>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
@@ -108,8 +108,8 @@ export function FeaturesSection() {
                         transition={{ delay: 0.2 }}
                         className="text-lg text-gray-600 dark:text-gray-400"
                     >
-                        From raw data to actionable insights in seconds. Our platform handles
-                        the heavy lifting so you can focus on what matters.
+                        Kuya doesn't just analyze data — it tells you what to do next.
+                        Think of it as having a senior analyst on your team.
                     </motion.p>
                 </div>
 
